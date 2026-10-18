@@ -129,11 +129,23 @@ def answer_question(question: str):
         )
         return {"answer": round(usd_total, 2)}
 
+    
+    if "customer" in q and any(
+        word in q for word in ["count", "how many", "number of", "distinct"]
+    ):
+        return {
+            "answer": len({
+                o["customer"] for o in selected
+                if o["status"] == "paid"
+            })
+        }
+
     if "count" in q or "how many" in q or "number of" in q:
         return {"answer": len(selected)}
 
     if "customer" in q:
         return {"answer": len({o["customer"] for o in selected})}
+}
 
     if "quantity" in q or "units" in q:
         return {"answer": sum(int(o["qty"]) for o in selected)}
