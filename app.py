@@ -90,6 +90,35 @@ def answer_question(question: str):
             selected = [o for o in selected if o["status"] == status]
             break
 
+    # Find the product with the highest USD revenue.
+    if (
+        "product" in q
+        and any(word in q for word in ["most", "highest", "top", "maximum"])
+        and any(word in q for word in ["revenue", "sales", "earned"])
+    ):
+        product_revenue = {}
+
+        for o in selected:
+            if o["status"] != "paid":
+                continue
+
+            amount = float(
+                o.get("amount", float(o["unit_price"]) * int(o["qty"]))
+            )
+            usd_amount = amount * float(rates.get(o["currency"], 0))
+            product = o["product"]
+
+            product_revenue[product] = (
+                product_revenue.get(product, 0) + usd_amount
+            )
+
+        if not product_revenue:
+            return {"answer": "No paid sales found"}
+
+        best_product = max(product_revenue, key=product_revenue.get)
+        return {"answer": best_product}
+
+
     # Revenue includes only paid orders.
     if "revenue" in q or "sales" in q or "total" in q:
         selected = [o for o in selected if o["status"] == "paid"]
