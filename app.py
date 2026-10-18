@@ -145,7 +145,6 @@ def answer_question(question: str):
 
     if "customer" in q:
         return {"answer": len({o["customer"] for o in selected})}
-}
 
     if "quantity" in q or "units" in q:
         return {"answer": sum(int(o["qty"]) for o in selected)}
